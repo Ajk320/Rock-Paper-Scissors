@@ -4,61 +4,84 @@ function getComputerChoice(){
     return choices[randomIndex];
 }
 
+
+let userScore = 0, computerScore = 0;
 function playRound(playerSelection, computerSelection){
-    if(playerSelection==computerSelection){
-        return "It's a tie!Play again";
+    if(computerScore==5){
+        return "You lose! Score:"+userScore+"-"+computerScore;
     }
-    else if(playerSelection=="rock" && computerSelection=="scissors"){
-        return "You Win! Rock beats Scissors";
-    }
-    else if(playerSelection=="rock" && computerSelection=="paper"){
-        return "You Lose! Paper beats Rock";
-    }
-    else if(playerSelection=="paper" && computerSelection=="rock"){
-        return "You Win! Paper beats Rock";
-    }
-    else if(playerSelection=="paper" && computerSelection=="scissors"){
-        return "You Lose! Scissors beat Paper";
-    }
-    else if(playerSelection=="scissors" && computerSelection=="rock"){
-        return "You Lose! Rock beats Scissors";
-    }
-    else if(playerSelection=="scissors" && computerSelection=="paper") {
-        return "You Win! Scissors beat Paper";
-    }
-}
-
-
-
-
-function game(){
-    let userScore=0, computerScore=0;
-    for( let i = 0; i < 5; i++){
-        const playerSelection = (prompt("Enter your choice:")).toLowerCase();
-        if(!['rock', 'paper', 'scissors'].includes(playerSelection)){
-            console.log("invalid choice. Please enter rock , paper or scissors .")
-            i--;
-            continue;
-        }
-        const computerSelection = getComputerChoice();
-        const outcome = playRound(playerSelection, computerSelection);
-        console.log(outcome);
-        if(outcome.includes("Win")){
-            userScore++;
-        }
-        else if(outcome.includes("Lose")){
-            computerScore++;
-        }
-    }
-    if(userScore>computerScore){
-        console.log("You Won! Your score: "+userScore+" Computer's score: "+computerScore);
-    }
-    else if(computerScore>userScore){
-        console.log("You Lost! Your score: "+userScore+" Computer's score: "+computerScore);
+    else if(userScore==5){
+        return "You Win! Score:"+userScore+"-"+computerScore;
     }
     else{
-        console.log("It's a Draw! Your score: "+userScore+" Computer's score: "+computerScore);
+    
+        if(playerSelection==computerSelection){
+            return "It's a tie! Play again. Score:"+userScore+"-"+computerScore;
+        }
+        else if(playerSelection=="rock" && computerSelection=="scissors"){
+            userScore++;
+            return "You Win! Rock beats Scissors. Score:"+userScore+"-"+computerScore;
+            
+        }
+        else if(playerSelection=="rock" && computerSelection=="paper"){
+            computerScore++;
+            return "You Lose! Paper beats Rock. Score:"+userScore+"-"+computerScore;
+        }
+        else if(playerSelection=="paper" && computerSelection=="rock"){
+            userScore++;
+            return "You Win! Paper beats Rock. Score:"+userScore+"-"+computerScore;
+        }
+        else if(playerSelection=="paper" && computerSelection=="scissors"){
+            computerScore++;
+            return "You Lose! Scissors beat Paper. Score:"+userScore+"-"+computerScore;
+        }
+        else if(playerSelection=="scissors" && computerSelection=="rock"){
+            computerScore++;
+            return "You Lose! Rock beats Scissors. Score:"+userScore+"-"+computerScore;
+        }
+        else if(playerSelection=="scissors" && computerSelection=="paper") {
+            userScore++;
+            return "You Win! Scissors beat Paper. Score:"+userScore+"-"+computerScore;
+        }
     }
 }
 
-game();
+
+
+
+
+function checkGameWin() {
+    if (userScore === 5 || computerScore === 5) {
+        resetGame();
+    }
+}
+
+function resetGame() {
+    userScore = 0;
+    computerScore = 0;
+}
+
+function updateScores() {
+    document.getElementById('user-score').textContent = userScore;
+    document.getElementById('computer-score').textContent = computerScore;
+}
+
+function playerClicks(choice) {
+    if (userScore === 5 || computerScore === 5) {
+        // Prevent further rounds if the game has already been won
+        resultDiv.textContent = "Game has already been won. Please reset the game.";
+    } else {
+        playerSelection = choice;
+        computerSelection = getComputerChoice();
+        resultDiv.textContent = playRound(playerSelection, computerSelection);
+        updateScores();
+    }
+}
+
+const buttons = document.querySelectorAll('.choice-button');
+
+buttons.forEach(button => {
+    button.addEventListener('click', () => playerClicks(button.id));
+});
+
+const resultDiv = document.getElementById('result');
